@@ -3,228 +3,227 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Crypto Dashboard</title>
 
 <style>
+
 body{
-    background:#111;
-    color:white;
-    font-family:Arial,sans-serif;
-    margin:10px;
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+padding:15px;
 }
+
 h1{
-    text-align:center;
+text-align:center;
+font-size:36px;
 }
-table{
-    width:100%;
-    border-collapse:collapse;
+
+.info{
+margin:20px 0;
+font-size:18px;
+line-height:1.8;
 }
-th,td{
-    padding:8px;
-    text-align:center;
-    border-bottom:1px solid #333;
-}
-.up{color:#00ff66;}
-.down{color:#ff4444;}
+
 button{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    font-size:16px;
+width:100%;
+padding:18px;
+font-size:32px;
+font-weight:bold;
+border:none;
+border-radius:12px;
+margin-bottom:20px;
 }
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:18px;
+}
+
+th{
+padding:15px 5px;
+border-bottom:2px solid #333;
+}
+
+td{
+padding:15px 5px;
+border-bottom:1px solid #333;
+text-align:center;
+}
+
+.verde{
+color:#00ff88;
+font-weight:bold;
+}
+
+.rojo{
+color:#ff5555;
+font-weight:bold;
+}
+
+.blanco{
+color:white;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <h1>Crypto Dashboard</h1>
 
-<div id="horas"></div>
+<div id="horas" class="info"></div>
 
 <button onclick="actualizarBase()">
 Actualizar Base Ahora
 </button>
 
 <table>
+
 <thead>
 <tr>
 <th>Activo</th>
 <th>Actual</th>
 <th>Base</th>
+<th>USD</th>
 <th>%</th>
 </tr>
 </thead>
+
 <tbody id="tabla"></tbody>
+
 </table>
 
 <script>
 
-const monedas=[
+const activos=[
 "BTCUSDT",
 "ETHUSDT",
 "SOLUSDT",
 "XRPUSDT",
 "AAVEUSDT",
-"PENGUUSDT"
+"PENGUUSDT", "DOT", "AVAX", "ROSE", "LTC", "TAO", "CRV"
 ];
-
-let preciosPrevios={};
 
 function formato(valor){
 
 if(valor>=1000){
 
-return valor.toLocaleString(
-'es-CO',
-{
+return Number(valor)
+.toLocaleString("es-CO",{
 minimumFractionDigits:2,
 maximumFractionDigits:2
-}
-);
+});
 
 }
 
 if(valor>=1){
 
-return valor.toLocaleString(
-'es-CO',
-{
+return Number(valor)
+.toLocaleString("es-CO",{
 minimumFractionDigits:2,
 maximumFractionDigits:4
-}
-);
+});
 
 }
 
-return valor.toLocaleString(
-'es-CO',
-{
-minimumFractionDigits:4,
+return Number(valor)
+.toLocaleString("es-CO",{
+minimumFractionDigits:6,
 maximumFractionDigits:6
-}
-);
+});
 
 }
 
 async function cargar(){
 
-const resp=await fetch(
-"https://api.binance.com/api/v3/ticker/price"
-);
+const tabla=document.getElementById("tabla");
 
-const datos=await resp.json();
+tabla.innerHTML="";
 
 let base=
-JSON.parse(localStorage.getItem("base"));
+JSON.parse(
+localStorage.getItem("base")
+);
 
 let baseHora=
 localStorage.getItem("baseHora");
 
-const ahora=Date.now();
-
-let precios={};
-
-monedas.forEach(m=>{
-
-let obj=
-datos.find(x=>x.symbol===m);
-
-if(obj){
-
-precios[m]=
-parseFloat(obj.price);
-
-}
-
-});
-
 if(!base){
 
-base=precios;
+base={};
+
+for(let activo of activos){
+
+const r=
+await fetch(
+`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
+);
+
+const d=
+await r.json();
+
+base[activo]=
+parseFloat(d.price);
+
+}
 
 localStorage.setItem(
 "base",
 JSON.stringify(base)
 );
 
-localStorage.setItem(
-"baseHora",
-ahora
-);
-
-baseHora=ahora;
-
-}
-
-if(
-ahora-baseHora>
-4*60*60*1000
-){
-
-localStorage.setItem(
-"base",
-JSON.stringify(precios)
-);
+baseHora=
+Date.now();
 
 localStorage.setItem(
 "baseHora",
-ahora
+baseHora
 );
 
-base=precios;
-baseHora=ahora;
-
 }
 
-let html="";
+for(let activo of activos){
 
-let ranking=[];
+const r=
+await fetch(
+`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
+);
 
-monedas.forEach(m=>{
+const d=
+await r.json();
 
-let actual=
-precios[m];
+const actual=
+parseFloat(d.price);
 
-let inicial=
-base[m];
+const valorBase=
+base[activo];
 
-let usd=
-actual-inicial;
+const diferencia=
+actual-valorBase;
 
-let pct=
-((actual/inicial)-1)*100;
+const porcentaje=
+(diferencia/valorBase)*100;
 
-let clase="";
+let clase="blanco";
 
-if(preciosPrevios[m]){
-
-if(actual>
-preciosPrevios[m]){
-
-clase="up";
-
+if(diferencia>0){
+clase="verde";
 }
 
-if(actual<
-preciosPrevios[m]){
-
-clase="down";
-
+if(diferencia<0){
+clase="rojo";
 }
 
-}
-
-ranking.push({
-activo:m,
-pct:pct
-});
-
-html+=`
+tabla.innerHTML+=`
 
 <tr>
 
 <td>
-${m.replace("USDT","")}
+${activo.replace("USDT","")}
 </td>
 
 <td class="${clase}">
@@ -232,77 +231,50 @@ ${formato(actual)}
 </td>
 
 <td>
-${formato(inicial)}
+${formato(valorBase)}
 </td>
 
-<td class="${
-usd>=0?"up":"down"
-}">
-${usd>=0?"+":""}
-${formato(usd)}
+<td class="${clase}">
+${diferencia>0?"+":""}
+${formato(diferencia)}
 </td>
 
-<td class="${
-pct>=0?"up":"down"
-}">
-${pct.toFixed(2)}%
+<td class="${clase}">
+${porcentaje>0?"+":""}
+${porcentaje.toFixed(2)}%
 </td>
 
 </tr>
 
 `;
 
-preciosPrevios[m]=actual;
+}
 
-});
-
-document
-.getElementById("tabla")
-.innerHTML=html;
-
-ranking.sort(
-(a,b)=>b.pct-a.pct
-);
-
-document
-.getElementById("ranking")
-.innerHTML=
-ranking
-.map(r=>
-`<li>
-${r.activo.replace("USDT","")}
- ${r.pct.toFixed(2)}%
-</li>`
-)
-.join("");
-
-const proxima=
-
+let proxima=
 new Date(
-parseInt(baseHora)+
-4*60*60*1000
+parseInt(baseHora)
++
+(4*60*60*1000)
 );
 
-document
-.getElementById("horas")
+document.getElementById("horas")
 .innerHTML=
 
 `
-Base:
-${new Date(
-parseInt(baseHora)
-).toLocaleTimeString()}
+<b>Hora Base:</b>
+${new Date(parseInt(baseHora))
+.toLocaleTimeString('es-CO')}
 
 <br>
 
-Actual:
+<b>Hora Actual:</b>
 ${new Date()
-.toLocaleTimeString()}
+.toLocaleTimeString('es-CO')}
 
 <br>
 
-Próxima Base:
-${proxima.toLocaleTimeString()}
+<b>Próxima Base:</b>
+${proxima.toLocaleTimeString('es-CO')}
 `;
 
 }
@@ -327,11 +299,6 @@ cargar,
 );
 
 </script>
-<h2>
-🏆 Ranking de Fuerza
-</h2>
 
-<ol id="ranking">
-</ol>
 </body>
-</html>.html
+</html>
