@@ -70,6 +70,42 @@ const monedas=[
 
 let preciosPrevios={};
 
+function formato(valor){
+
+if(valor>=1000){
+
+return valor.toLocaleString(
+'es-CO',
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}
+
+if(valor>=1){
+
+return valor.toLocaleString(
+'es-CO',
+{
+minimumFractionDigits:2,
+maximumFractionDigits:4
+}
+);
+
+}
+
+return valor.toLocaleString(
+'es-CO',
+{
+minimumFractionDigits:4,
+maximumFractionDigits:6
+}
+);
+
+}
+
 async function cargar(){
 
 const resp=await fetch(
@@ -90,10 +126,14 @@ let precios={};
 
 monedas.forEach(m=>{
 
-let obj=datos.find(x=>x.symbol===m);
+let obj=
+datos.find(x=>x.symbol===m);
 
 if(obj){
-precios[m]=parseFloat(obj.price);
+
+precios[m]=
+parseFloat(obj.price);
+
 }
 
 });
@@ -113,6 +153,7 @@ ahora
 );
 
 baseHora=ahora;
+
 }
 
 if(
@@ -132,14 +173,23 @@ ahora
 
 base=precios;
 baseHora=ahora;
+
 }
 
 let html="";
 
+let ranking=[];
+
 monedas.forEach(m=>{
 
-let actual=precios[m];
-let inicial=base[m];
+let actual=
+precios[m];
+
+let inicial=
+base[m];
+
+let usd=
+actual-inicial;
 
 let pct=
 ((actual/inicial)-1)*100;
@@ -148,56 +198,133 @@ let clase="";
 
 if(preciosPrevios[m]){
 
-if(actual>preciosPrevios[m])
+if(actual>
+preciosPrevios[m]){
+
 clase="up";
 
-if(actual<preciosPrevios[m])
-clase="down";
 }
 
+if(actual<
+preciosPrevios[m]){
+
+clase="down";
+
+}
+
+}
+
+ranking.push({
+activo:m,
+pct:pct
+});
+
 html+=`
+
 <tr>
-<td>${m.replace("USDT","")}</td>
+
+<td>
+${m.replace("USDT","")}
+</td>
+
 <td class="${clase}">
-${actual.toFixed(4)}
+${formato(actual)}
 </td>
+
 <td>
-${inicial.toFixed(4)}
+${formato(inicial)}
 </td>
-<td>
+
+<td class="${
+usd>=0?"up":"down"
+}">
+${usd>=0?"+":""}
+${formato(usd)}
+</td>
+
+<td class="${
+pct>=0?"up":"down"
+}">
 ${pct.toFixed(2)}%
 </td>
+
 </tr>
+
 `;
 
 preciosPrevios[m]=actual;
 
 });
 
-document.getElementById(
-"tabla"
-).innerHTML=html;
+document
+.getElementById("tabla")
+.innerHTML=html;
 
-document.getElementById(
-"horas"
-).innerHTML=
-"Base: "+
+ranking.sort(
+(a,b)=>b.pct-a.pct
+);
+
+document
+.getElementById("ranking")
+.innerHTML=
+ranking
+.map(r=>
+`<li>
+${r.activo.replace("USDT","")}
+ ${r.pct.toFixed(2)}%
+</li>`
+)
+.join("");
+
+const proxima=
+
 new Date(
+parseInt(baseHora)+
+4*60*60*1000
+);
+
+document
+.getElementById("horas")
+.innerHTML=
+
+`
+Base:
+${new Date(
 parseInt(baseHora)
-).toLocaleTimeString();
+).toLocaleTimeString()}
+
+<br>
+
+Actual:
+${new Date()
+.toLocaleTimeString()}
+
+<br>
+
+Próxima Base:
+${proxima.toLocaleTimeString()}
+`;
 
 }
 
 function actualizarBase(){
 
 localStorage.removeItem("base");
-localStorage.removeItem("baseHora");
+
+localStorage.removeItem(
+"baseHora"
+);
+
+location.reload();
 
 }
 
 cargar();
 
-setInterval(cargar,1000);
+setInterval(
+cargar,
+1000
+);
 
 </script>
 
