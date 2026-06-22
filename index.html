@@ -1,1 +1,205 @@
-index.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto Dashboard</title>
+
+<style>
+body{
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+    margin:10px;
+}
+h1{
+    text-align:center;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    padding:8px;
+    text-align:center;
+    border-bottom:1px solid #333;
+}
+.up{color:#00ff66;}
+.down{color:#ff4444;}
+button{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Crypto Dashboard</h1>
+
+<div id="horas"></div>
+
+<button onclick="actualizarBase()">
+Actualizar Base Ahora
+</button>
+
+<table>
+<thead>
+<tr>
+<th>Activo</th>
+<th>Actual</th>
+<th>Base</th>
+<th>%</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+
+<script>
+
+const monedas=[
+"BTCUSDT",
+"ETHUSDT",
+"SOLUSDT",
+"XRPUSDT",
+"AAVEUSDT",
+"PENGUUSDT"
+];
+
+let preciosPrevios={};
+
+async function cargar(){
+
+const resp=await fetch(
+"https://api.binance.com/api/v3/ticker/price"
+);
+
+const datos=await resp.json();
+
+let base=
+JSON.parse(localStorage.getItem("base"));
+
+let baseHora=
+localStorage.getItem("baseHora");
+
+const ahora=Date.now();
+
+let precios={};
+
+monedas.forEach(m=>{
+
+let obj=datos.find(x=>x.symbol===m);
+
+if(obj){
+precios[m]=parseFloat(obj.price);
+}
+
+});
+
+if(!base){
+
+base=precios;
+
+localStorage.setItem(
+"base",
+JSON.stringify(base)
+);
+
+localStorage.setItem(
+"baseHora",
+ahora
+);
+
+baseHora=ahora;
+}
+
+if(
+ahora-baseHora>
+4*60*60*1000
+){
+
+localStorage.setItem(
+"base",
+JSON.stringify(precios)
+);
+
+localStorage.setItem(
+"baseHora",
+ahora
+);
+
+base=precios;
+baseHora=ahora;
+}
+
+let html="";
+
+monedas.forEach(m=>{
+
+let actual=precios[m];
+let inicial=base[m];
+
+let pct=
+((actual/inicial)-1)*100;
+
+let clase="";
+
+if(preciosPrevios[m]){
+
+if(actual>preciosPrevios[m])
+clase="up";
+
+if(actual<preciosPrevios[m])
+clase="down";
+}
+
+html+=`
+<tr>
+<td>${m.replace("USDT","")}</td>
+<td class="${clase}">
+${actual.toFixed(4)}
+</td>
+<td>
+${inicial.toFixed(4)}
+</td>
+<td>
+${pct.toFixed(2)}%
+</td>
+</tr>
+`;
+
+preciosPrevios[m]=actual;
+
+});
+
+document.getElementById(
+"tabla"
+).innerHTML=html;
+
+document.getElementById(
+"horas"
+).innerHTML=
+"Base: "+
+new Date(
+parseInt(baseHora)
+).toLocaleTimeString();
+
+}
+
+function actualizarBase(){
+
+localStorage.removeItem("base");
+localStorage.removeItem("baseHora");
+
+}
+
+cargar();
+
+setInterval(cargar,1000);
+
+</script>
+
+</body>
+</html>.html
