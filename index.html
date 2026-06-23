@@ -224,7 +224,13 @@ return "⛔ Bajista Fuerte";
 }
 
 async function cargar(){
+let base=
+JSON.parse(
+localStorage.getItem("base")
+);
 
+let baseHora=
+localStorage.getItem("baseHora");
 if(!base){
 
 base={};
