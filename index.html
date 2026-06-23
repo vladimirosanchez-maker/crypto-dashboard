@@ -323,21 +323,9 @@ JSON.parse(
 localStorage.getItem("base")
 );
 
-const ids=
-Object.values(activos).join(",");
-
-const url=
-`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
-
-const datos=
-await fetch(url);
-
-const precios=
-await datos.json();
-
 let ranking=[];
 
-for(for(let ticker of activos){
+for(let ticker of activos){
 
 const r=
 await fetch(
