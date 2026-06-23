@@ -225,34 +225,22 @@ return "⛔ Bajista Fuerte";
 
 async function cargar(){
 
-let base=
-JSON.parse(
-localStorage.getItem("base")
-);
-
-let baseHora=
-localStorage.getItem("baseHora");
-
-const ids=
-Object.values(activos).join(",");
-
-const url=
-`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
-
-const datos=
-await fetch(url);
-
-const precios=
-await datos.json();
-
 if(!base){
 
 base={};
 
-for(const [ticker,id] of Object.entries(activos)){
+for(let ticker of activos){
+
+const r=
+await fetch(
+`https://api.binance.com/api/v3/ticker/price?symbol=${ticker}`
+);
+
+const d=
+await r.json();
 
 base[ticker]=
-precios[id].usd;
+parseFloat(d.price);
 
 }
 
@@ -261,8 +249,7 @@ localStorage.setItem(
 JSON.stringify(base)
 );
 
-baseHora=
-Date.now();
+baseHora=Date.now();
 
 localStorage.setItem(
 "baseHora",
@@ -270,7 +257,6 @@ baseHora
 );
 
 }
-
 const tabla=
 document.getElementById("tabla");
 
