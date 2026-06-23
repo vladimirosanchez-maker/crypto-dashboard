@@ -158,8 +158,7 @@ Actualizar Base Ahora
 
 <tr>
 
-<th>Act</th>
-
+<th>Activo</th>
 <th>H1</th>
 <th>H4</th>
 <th>D</th>
@@ -371,7 +370,10 @@ await r.json();
 
 const actual=
 parseFloat(d.price);
-
+document.getElementById(
+"actual_"+ticker
+).innerHTML=
+formato(actual);
 const valorBase=
 base[ticker] || actual;
 
