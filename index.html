@@ -508,7 +508,15 @@ await r.json();
 const actual=
 parseFloat(datosActual.price);
     
-    const soporte=
+    
+
+const h1 = await obtenerMinimo(ticker,"1h",24);
+const h4 = await obtenerMinimo(ticker,"4h",30);
+const d = await obtenerMinimo(ticker,"1d",30);
+const s = await obtenerMinimo(ticker,"1w",52);
+const m = await obtenerMinimo(ticker,"1M",12);
+
+const soporte=
 Math.max(
 h1.precio,
 h4.precio,
@@ -516,12 +524,6 @@ d.precio,
 s.precio,
 m.precio
 );
-
-const h1 = await obtenerMinimo(ticker,"1h",24);
-const h4 = await obtenerMinimo(ticker,"4h",30);
-const d = await obtenerMinimo(ticker,"1d",30);
-const s = await obtenerMinimo(ticker,"1w",52);
-const m = await obtenerMinimo(ticker,"1M",12);
 
 html += `
 <tr>
