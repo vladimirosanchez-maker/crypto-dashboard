@@ -118,27 +118,29 @@ Actualizar Base Ahora
 </div>
 
 <script>
-
 const activos=[
-"AAVEUSDT",
-"AVAXUSDT",
-"BTCUSDT",
-"CRVUSDT",
-"DOTUSDT",
-"ETHUSDT",
-"LTCUSDT",
-"PENGUUSDT",
-"ROSEUSDT",
-"SOLUSDT",
-"TAOUSDT",
-"XRPUSDT"
+“AAVEUSDT”,
+“AVAXUSDT”,
+“BTCUSDT”,
+“CRVUSDT”,
+“DOTUSDT”,
+“ETHUSDT”,
+“LTCUSDT”,
+“PENGUUSDT”,
+“ROSEUSDT”,
+“SOLUSDT”,
+“TAOUSDT”,
+“XRPUSDT”
 ];
+
+let ultimoPrecio={};
+let tablaCreada=false;
 
 function formato(v){
 
 if(v>=1000){
 return Number(v).toLocaleString(
-"es-CO",
+“es-CO”,
 {
 minimumFractionDigits:2,
 maximumFractionDigits:2
@@ -148,7 +150,7 @@ maximumFractionDigits:2
 
 if(v>=1){
 return Number(v).toLocaleString(
-"es-CO",
+“es-CO”,
 {
 minimumFractionDigits:2,
 maximumFractionDigits:4
@@ -157,7 +159,7 @@ maximumFractionDigits:4
 }
 
 return Number(v).toLocaleString(
-"es-CO",
+“es-CO”,
 {
 minimumFractionDigits:6,
 maximumFractionDigits:6
@@ -166,26 +168,15 @@ maximumFractionDigits:6
 
 }
 
-function fuerza(p){
-
-if(p>=5) return "🔥 Muy Fuerte";
-if(p>=2) return "🟢 Fuerte";
-if(p>-2) return "⚪ Neutral";
-if(p>-5) return "🟠 Débil";
-
-return "🔴 Muy Débil";
-
-}
-
 async function cargar(){
 
 let base=
 JSON.parse(
-localStorage.getItem("base")
+localStorage.getItem(“base”)
 );
 
 let baseHora=
-localStorage.getItem("baseHora");
+localStorage.getItem(“baseHora”);
 
 if(!base){
 
@@ -195,7 +186,7 @@ for(let activo of activos){
 
 const r=
 await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
+https://api.binance.com/api/v3/ticker/price?symbol=${activo}
 );
 
 const d=
@@ -207,7 +198,7 @@ parseFloat(d.price);
 }
 
 localStorage.setItem(
-"base",
+“base”,
 JSON.stringify(base)
 );
 
@@ -215,16 +206,68 @@ baseHora=
 Date.now();
 
 localStorage.setItem(
-"baseHora",
+“baseHora”,
 baseHora
 );
 
 }
 
 const tabla=
-document.getElementById("tabla");
+document.getElementById(“tabla”);
 
-tabla.innerHTML="";
+if(!tablaCreada){
+
+for(let activo of activos){
+
+ultimoPrecio[activo]=
+base[activo];
+
+tabla.innerHTML+=`
+
+<tr>
+<td>
+${activo.replace("USDT","")}
+</td>
+<td id="sem_${activo}">
+⚪
+</td>
+<td id="precio_${activo}">
+${formato(base[activo])}
+</td>
+<td>
+${formato(base[activo])}
+</td>
+<td id="usd_${activo}">
+0
+</td>
+<td id="pct_${activo}">
+0%
+</td>
+<td id="fuerza_${activo}">
+🟡 Neutral
+</td>
+</tr>
+
+`;
+
+}
+
+tablaCreada=true;
+
+}
+
+actualizarDatos();
+
+actualizarHoras();
+
+}
+
+async function actualizarDatos(){
+
+let base=
+JSON.parse(
+localStorage.getItem(“base”)
+);
 
 let ranking=[];
 
@@ -232,7 +275,7 @@ for(let activo of activos){
 
 const r=
 await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
+https://api.binance.com/api/v3/ticker/price?symbol=${activo}
 );
 
 const d=
@@ -250,53 +293,77 @@ actual-valorBase;
 const pct=
 (usd/valorBase)*100;
 
+let semaforo=“⚪”;
+
+if(actual>ultimoPrecio[activo]){
+semaforo=“🟢”;
+}
+
+if(actual<ultimoPrecio[activo]){
+semaforo=“🔴”;
+}
+
+document.getElementById(
+“sem_”+activo
+).innerHTML=semaforo;
+
+document.getElementById(
+“precio_”+activo
+).innerHTML=formato(actual);
+
+document.getElementById(
+“usd_”+activo
+).innerHTML=
+(usd>0?”+”:””)
++
+formato(usd);
+
+document.getElementById(
+“pct_”+activo
+).innerHTML=
+pct.toFixed(2)+”%”;
+
+let fuerzaTxt=””;
+let tendenciaTxt=””;
+
+if(pct>=5){
+
+fuerzaTxt=“🔥 Muy Fuerte”;
+tendenciaTxt=“🔥 Explosiva”;
+
+}else if(pct>=2){
+
+fuerzaTxt=“🟢 Fuerte”;
+tendenciaTxt=“🟢 Alcista Fuerte”;
+
+}else if(pct>=0){
+
+fuerzaTxt=“🟡 Neutral”;
+tendenciaTxt=“🟡 Alcista”;
+
+}else if(pct>-3){
+
+fuerzaTxt=“🟠 Débil”;
+tendenciaTxt=“🟠 Bajista”;
+
+}else{
+
+fuerzaTxt=“🔴 Muy Débil”;
+tendenciaTxt=“🔴 Bajista Fuerte”;
+
+}
+
+document.getElementById(
+“fuerza_”+activo
+).innerHTML=fuerzaTxt;
+
+ultimoPrecio[activo]=actual;
+
 ranking.push({
 activo,
-pct
+pct,
+fuerza:fuerzaTxt
 });
-
-let color=
-usd>=0?"verde":"rojo";
-
-let semaforo=
-usd>=0?"🟢":"🔴";
-
-tabla.innerHTML+=`
-
-<tr>
-
-<td>
-${activo.replace("USDT","")}
-</td>
-
-<td>
-${semaforo}
-</td>
-
-<td class="${color}">
-${formato(actual)}
-</td>
-
-<td>
-${formato(valorBase)}
-</td>
-
-<td class="${color}">
-${usd>0?"+":""}
-${formato(usd)}
-</td>
-
-<td class="${color}">
-${pct.toFixed(2)}%
-</td>
-
-<td>
-${fuerza(pct)}
-</td>
-
-</tr>
-
-`;
 
 }
 
@@ -304,56 +371,51 @@ ranking.sort(
 (a,b)=>b.pct-a.pct
 );
 
-let htmlRanking="";
-
-ranking.forEach((c,i)=>{
-
-htmlRanking+=`
-
-<div>
-
-${i+1}. 
-${c.activo.replace("USDT","")}
-&nbsp;&nbsp;
-${c.pct.toFixed(2)}%
-
-</div>
-
-`;
-
-});
-
 document.getElementById(
-"ranking"
+“ranking”
 ).innerHTML=
-htmlRanking;
+
+ranking.map((r,i)=>
+
+${i+1}. ${r.activo.replace("USDT","")} ${r.pct.toFixed(2)}% ${r.fuerza}
+
+).join(””);
+
+}
+
+function actualizarHoras(){
+
+let baseHora=
+localStorage.getItem(
+“baseHora”
+);
 
 let proxima=
 new Date(
 parseInt(baseHora)+
-(4*60*60*1000)
+(46060*1000)
 );
 
 document.getElementById(
-"horas"
+“horas”
 ).innerHTML=
 
 `
-<b>Hora Base:</b>
+Hora Base:
 ${new Date(
 parseInt(baseHora)
-).toLocaleTimeString("es-CO")}
+).toLocaleTimeString(“es-CO”)}
 
 <br>
 
-<b>Hora Actual:</b>
+Hora Actual:
 ${new Date()
-.toLocaleTimeString("es-CO")}
+.toLocaleTimeString(“es-CO”)}
 
 <br>
 
-<b>Próxima Base:</b>
-${proxima.toLocaleTimeString("es-CO")}
+Próxima Base:
+${proxima.toLocaleTimeString(“es-CO”)}
 `;
 
 }
@@ -361,23 +423,31 @@ ${proxima.toLocaleTimeString("es-CO")}
 function actualizarBase(){
 
 localStorage.removeItem(
-"base"
+“base”
 );
 
 localStorage.removeItem(
-"baseHora"
+“baseHora”
 );
 
-cargar();
+location.reload();
 
 }
 
 cargar();
 
 setInterval(
-cargar,
+actualizarDatos,
 5000
 );
+
+setInterval(
+actualizarHoras,
+60000
+);
+
+
+
 
 </script>
 
