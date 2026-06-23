@@ -465,7 +465,10 @@ new Date(vela[0])
 
 }
 
-return formato(minimo);
+return {
+precio:minimo,
+fecha:fechaMinimo
+};
 
 }
 async function cargarMinimos(){
