@@ -3,35 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto Dashboard</title>
+<title>Jaime Crypto Dashboard</title>
 <style>
 body{
 background:#111;
 color:white;
 font-family:Arial,sans-serif;
-padding:12px;
 margin:0;
+padding:10px;
 }
 h1{
 text-align:center;
 font-size:28px;
-margin-bottom:15px;
+margin-bottom:10px;
 }
 .info{
-margin:15px 0;
-font-size:15px;
+font-size:14px;
 line-height:1.6;
+margin-bottom:15px;
 text-align:center;
 }
 button{
 width:100%;
 padding:12px;
-font-size:20px;
+font-size:18px;
 font-weight:bold;
 border:none;
-border-radius:12px;
-margin-bottom:20px;
-cursor:pointer;
+border-radius:10px;
+margin-bottom:15px;
 }
 table{
 width:100%;
@@ -39,13 +38,11 @@ border-collapse:collapse;
 font-size:14px;
 }
 th{
-padding:10px 3px;
-font-size:14px;
+padding:8px 3px;
 border-bottom:2px solid #333;
 }
 td{
-padding:10px 3px;
-font-size:14px;
+padding:8px 3px;
 border-bottom:1px solid #333;
 text-align:center;
 }
@@ -63,7 +60,7 @@ color:white;
 </style>
 </head>
 <body>
-<h1>Crypto Dashboard</h1>
+<h1>Jaime Crypto Dashboard</h1>
 <div id="horas" class="info"></div>
 <button onclick="actualizarBase()">
 Actualizar Base Ahora
@@ -95,26 +92,35 @@ const activos=[
 "TAOUSDT",
 "CRVUSDT"
 ];
+let ultimoPrecio={};
 function formato(valor){
 if(valor>=1000){
-return Number(valor).toLocaleString("es-CO",{
+return Number(valor).toLocaleString(
+"es-CO",
+{
 minimumFractionDigits:2,
 maximumFractionDigits:2
-});
+}
+);
 }
 if(valor>=1){
-return Number(valor).toLocaleString("es-CO",{
+return Number(valor).toLocaleString(
+"es-CO",
+{
 minimumFractionDigits:2,
 maximumFractionDigits:4
-});
 }
-return Number(valor).toLocaleString("es-CO",{
+);
+}
+return Number(valor).toLocaleString(
+"es-CO",
+{
 minimumFractionDigits:6,
 maximumFractionDigits:6
-});
 }
-async function cargar(){
-const tabla=document.getElementById("tabla");
+);
+}
+async function crearTabla(){
 let base=
 JSON.parse(localStorage.getItem("base"));
 let baseHora=
@@ -138,76 +144,155 @@ localStorage.setItem(
 baseHora
 );
 }
+const tabla=
+document.getElementById("tabla");
 tabla.innerHTML="";
+for(let activo of activos){
+ultimoPrecio[activo]=
+base[activo];
+const fila=`
+<tr>
+<td>${activo.replace("USDT","")}</td>
+<td
+id="precio_${activo}"
+class="blanco"
+>
+${formato(base[activo])}
+</td>
+<td>
+${formato(base[activo])}
+</td>
+<td
+id="usd_${activo}"
+>
+0
+</td>
+<td
+id="pct_${activo}"
+>
+0%
+</td>
+</tr>
+`;
+tabla.innerHTML+=fila;
+}
+actualizarHoras();
+}
+function actualizarHoras(){
+const baseHora=
+parseInt(
+localStorage.getItem("baseHora")
+);
+const vencimiento=
+baseHora+
+(4*60*60*1000);
+const restante=
+Math.max(
+0,
+vencimiento-Date.now()
+);
+const horas=
+Math.floor(
+restante/3600000
+);
+const minutos=
+Math.floor(
+(restante%3600000)/60000
+);
+document.getElementById(
+"horas"
+).innerHTML=
+`
+🕒 Base:
+${new Date(baseHora)
+.toLocaleTimeString('es-CO')}
+<br>
+⏰ Vence:
+${new Date(vencimiento)
+.toLocaleTimeString('es-CO')}
+<br>
+⌛ Faltan:
+${horas}h ${minutos}m
+`;
+}
+async function actualizarPrecios(){
+const base=
+JSON.parse(
+localStorage.getItem("base")
+);
 for(let activo of activos){
 try{
 const r=await fetch(
 `https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
 );
 const d=await r.json();
-const actual=parseFloat(d.price);
-const valorBase=base[activo];
-const diferencia=
-actual-valorBase;
-const porcentaje=
-(diferencia/valorBase)*100;
-let clase="blanco";
-if(diferencia>0){
-clase="verde";
-}
-if(diferencia<0){
-clase="rojo";
-}
-tabla.innerHTML+=`
-<tr>
-<td>
-${activo.replace("USDT","")}
-</td>
-<td class="${clase}">
-${formato(actual)}
-</td>
-<td>
-${formato(valorBase)}
-</td>
-<td class="${clase}">
-${diferencia>0?"+":""}
-${formato(diferencia)}
-</td>
-<td class="${clase}">
-${porcentaje>0?"+":""}
-${porcentaje.toFixed(2)}%
-</td>
-</tr>
-`;
-}catch(e){
-console.log(activo,e);
-}
-}
-let proxima=
-new Date(
-parseInt(baseHora)+
-(4*60*60*1000)
+const actual=
+parseFloat(d.price);
+const baseValor=
+base[activo];
+const usd=
+actual-baseValor;
+const pct=
+((actual/baseValor)-1)*100;
+const precioCelda=
+document.getElementById(
+"precio_"+activo
 );
-document.getElementById("horas")
-.innerHTML=
-`
-<b>🕒 Base tomada:</b>
-${new Date(parseInt(baseHora))
-.toLocaleTimeString('es-CO')}
-<br><br>
-<b>⏰ Válida hasta:</b>
-${proxima.toLocaleTimeString('es-CO')}
-`;
+if(
+actual>
+ultimoPrecio[activo]
+){
+precioCelda.className=
+"verde";
+}
+else if(
+actual<
+ultimoPrecio[activo]
+){
+precioCelda.className=
+"rojo";
+}
+precioCelda.innerHTML=
+formato(actual);
+document.getElementById(
+"usd_"+activo
+).innerHTML=
+(usd>0?"+":"")
++
+formato(usd);
+document.getElementById(
+"pct_"+activo
+).innerHTML=
+( pct>0?"+":"")
++
+pct.toFixed(2)
++
+"%";
+ultimoPrecio[activo]=
+actual;
+}catch(e){
+console.log(e);
+}
+}
+actualizarHoras();
 }
 function actualizarBase(){
-localStorage.removeItem("base");
-localStorage.removeItem("baseHora");
+localStorage.removeItem(
+"base"
+);
+localStorage.removeItem(
+"baseHora"
+);
 location.reload();
 }
-cargar();
+crearTabla();
 setInterval(
-cargar,
-30000
+actualizarPrecios,
+5000
+);
+setInterval(
+actualizarHoras,
+60000
 );
 </script>
 </body>
