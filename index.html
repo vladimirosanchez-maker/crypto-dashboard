@@ -494,12 +494,11 @@ const m = await obtenerMinimo(ticker,"1M",12);
 
 html += `
 <tr>
-<tr>
+
 
 <td>
 <b>${ticker.replace("USDT","")}</b>
 </td>
-
 
 <td>
 <span style="font-size:9px;color:#ffd700;font-weight:bold;">
@@ -542,8 +541,6 @@ ${formato(m.precio)}
 <br>
 <small>${m.fecha}</small>
 </td>
-</tr>
-`;
 
 }
 
