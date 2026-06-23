@@ -344,6 +344,9 @@ base[ticker];
 const pct=
 ((actual-valorBase)/valorBase)*100;
 
+const usd=
+actual-valorBase;
+
 let semaforo="⚪";
 
 if(actual>ultimoPrecio[ticker]){
@@ -363,12 +366,6 @@ document.getElementById(
 ).innerHTML=
 formato(actual);
 
-document.getElementById(
-"usd_"+ticker
-).innerHTML=
-(usd>0?"+":"")
-+
-formato(usd);
 
 document.getElementById(
 "pct_"+ticker
