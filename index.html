@@ -492,7 +492,7 @@ const s = await obtenerMinimo(ticker,"1w",52);
 const m = await obtenerMinimo(ticker,"1M",12);
 
 const soporte=
-Math.max(
+Math.min(
 h1.precio,
 h4.precio,
 d.precio,
