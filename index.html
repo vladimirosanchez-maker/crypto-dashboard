@@ -496,6 +496,18 @@ async function cargarMinimos(){
 let html="";
 
 for(const ticker of activos){
+    
+    const r=
+await fetch(
+`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
+);
+
+const datosActual=
+await r.json();
+
+const actual=
+parseFloat(datosActual.price);
+    
 
 const h1 = await obtenerMinimo(ticker,"1h",24);
 const h4 = await obtenerMinimo(ticker,"4h",30);
