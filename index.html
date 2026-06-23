@@ -335,19 +335,24 @@ await datos.json();
 
 let ranking=[];
 
-for(const [ticker,id] of Object.entries(activos)){
+for(for(let ticker of activos){
+
+const r=
+await fetch(
+`https://api.binance.com/api/v3/ticker/price?symbol=${ticker}`
+);
+
+const d=
+await r.json();
 
 const actual=
-precios[id].usd;
+parseFloat(d.price);
 
 const valorBase=
 base[ticker];
 
-const usd=
-actual-valorBase;
-
 const pct=
-(usd/valorBase)*100;
+((actual-valorBase)/valorBase)*100;
 
 let semaforo="⚪";
 
