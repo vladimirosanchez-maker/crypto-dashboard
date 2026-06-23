@@ -519,11 +519,15 @@ html += `
 <b>${ticker.replace("USDT","")}</b>
 </td>
 <td>
-${formato(actual)}
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
+${formato(actual.precio)}
+</span>
 </td>
 
 <td>
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
 ${formato(h1.precio)}
+</span>
 <br>
 <small style="font-size:7px;color:#999;">
 ${h1.fecha}
@@ -531,30 +535,40 @@ ${h1.fecha}
 </td>
 
 <td>
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
 ${formato(h4.precio)}
+</span>
 <br>
 <small>${h4.fecha}</small>
 </td>
 
 <td>
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
 ${formato(d.precio)}
+</span>
 <br>
 <small>${d.fecha}</small>
 </td>
 
 <td>
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
 ${formato(s.precio)}
+</span>
 <br>
 <small>${s.fecha}</small>
 </td>
 
 <td>
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
 ${formato(m.precio)}
+</span>
 <br>
 <small>${m.fecha}</small>
 </td>
 <td>
-${formato(soporte)}
+<span style="font-size:9px;color:#ffd700;font-weight:bold;">
+${formato(soporte.precio)}
+</span>
 </td>
 </tr>
 `;
