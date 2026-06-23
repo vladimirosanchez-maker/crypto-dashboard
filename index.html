@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Crypto Dashboard</title>
+<title>Crypto Dashboard V5</title>
 
 <style>
 
@@ -26,12 +28,13 @@ margin-bottom:20px;
 font-size:15px;
 line-height:1.6;
 margin-bottom:20px;
+text-align:center;
 }
 
 button{
 width:100%;
 padding:14px;
-font-size:22px;
+font-size:20px;
 font-weight:bold;
 border:none;
 border-radius:10px;
@@ -43,16 +46,16 @@ color:#007aff;
 table{
 width:100%;
 border-collapse:collapse;
-font-size:14px;
+font-size:13px;
 }
 
 th{
-padding:10px 3px;
+padding:8px 3px;
 border-bottom:2px solid #333;
 }
 
 td{
-padding:10px 3px;
+padding:8px 3px;
 border-bottom:1px solid #333;
 text-align:center;
 }
@@ -68,25 +71,27 @@ font-weight:bold;
 }
 
 .ranking{
-margin-top:30px;
+margin-top:20px;
+margin-bottom:20px;
 }
 
 .ranking h2{
-font-size:24px;
+text-align:center;
+font-size:28px;
 }
 
 .ranking div{
 padding:8px 0;
 border-bottom:1px solid #333;
-font-size:16px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h1>Crypto Dashboard</h1>
+<h1>Crypto Dashboard V5</h1>
 
 <div id="horas" class="info"></div>
 
@@ -94,9 +99,20 @@ font-size:16px;
 Actualizar Base Ahora
 </button>
 
+<div class="ranking">
+
+<h2>
+🏆 Ranking de Fuerza
+</h2>
+
+<div id="ranking"></div>
+
+</div>
+
 <table>
 
 <thead>
+
 <tr>
 <th>Activo</th>
 <th>🚦</th>
@@ -105,33 +121,33 @@ Actualizar Base Ahora
 <th>USD</th>
 <th>%</th>
 <th>Fuerza</th>
+<th>Tendencia</th>
 </tr>
+
 </thead>
 
 <tbody id="tabla"></tbody>
 
 </table>
 
-<div class="ranking">
-<h2>🏆 Ranking de Fuerza</h2>
-<div id="ranking"></div>
-</div>
-
 <script>
-const activos=[
-"AAVEUSDT",
-"AVAXUSDT",
-"BTCUSDT",
-"CRVUSDT",
-"DOTUSDT",
-"ETHUSDT",
-"LTCUSDT",
-"PENGUUSDT",
-"ROSEUSDT",
-"SOLUSDT",
-"TAOUSDT",
-"XRPUSDT"
-];
+
+const activos={
+
+BTC:"bitcoin",
+ETH:"ethereum",
+SOL:"solana",
+XRP:"ripple",
+AAVE:"aave",
+PENGU:"pudgy-penguins",
+DOT:"polkadot",
+AVAX:"avalanche-2",
+ROSE:"oasis-network",
+LTC:"litecoin",
+TAO:"bittensor",
+CRV:"curve-dao-token"
+
+};
 
 let ultimoPrecio={};
 let tablaCreada=false;
@@ -168,6 +184,28 @@ maximumFractionDigits:6
 
 }
 
+function fuerza(p){
+
+if(p>=5) return "🔥 Muy Fuerte";
+if(p>=2) return "🟢 Fuerte";
+if(p>=-2) return "🟡 Neutral";
+if(p>=-5) return "🟠 Débil";
+
+return "🔴 Muy Débil";
+
+}
+
+function tendencia(p){
+
+if(p>=5) return "🚀 Explosiva";
+if(p>=2) return "📈 Alcista Fuerte";
+if(p>=0) return "🟢 Alcista";
+if(p>=-5) return "🟠 Bajista";
+
+return "⛔ Bajista Fuerte";
+
+}
+
 async function cargar(){
 
 let base=
@@ -178,22 +216,26 @@ localStorage.getItem("base")
 let baseHora=
 localStorage.getItem("baseHora");
 
+const ids=
+Object.values(activos).join(",");
+
+const url=
+`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+
+const datos=
+await fetch(url);
+
+const precios=
+await datos.json();
+
 if(!base){
 
 base={};
 
-for(let activo of activos){
+for(const [ticker,id] of Object.entries(activos)){
 
-const r=
-await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
-);
-
-const d=
-await r.json();
-
-base[activo]=
-parseFloat(d.price);
+base[ticker]=
+precios[id].usd;
 
 }
 
@@ -217,35 +259,45 @@ document.getElementById("tabla");
 
 if(!tablaCreada){
 
-for(let activo of activos){
+for(const ticker of Object.keys(activos)){
 
-ultimoPrecio[activo]=
-base[activo];
+ultimoPrecio[ticker]=
+base[ticker];
 
 tabla.innerHTML+=`
 
 <tr>
-<td>
-${activo.replace("USDT","")}
-</td>
-<td id="sem_${activo}">
+
+<td>${ticker}</td>
+
+<td id="sem_${ticker}">
 ⚪
 </td>
-<td id="precio_${activo}">
-${formato(base[activo])}
+
+<td id="actual_${ticker}">
+${formato(base[ticker])}
 </td>
+
 <td>
-${formato(base[activo])}
+${formato(base[ticker])}
 </td>
-<td id="usd_${activo}">
+
+<td id="usd_${ticker}">
 0
 </td>
-<td id="pct_${activo}">
+
+<td id="pct_${ticker}">
 0%
 </td>
-<td id="fuerza_${activo}">
+
+<td id="fuerza_${ticker}">
 🟡 Neutral
 </td>
+
+<td id="tendencia_${ticker}">
+🟢 Alcista
+</td>
+
 </tr>
 
 `;
@@ -261,31 +313,34 @@ actualizarDatos();
 actualizarHoras();
 
 }
-
 async function actualizarDatos(){
 
-let base=
+const base=
 JSON.parse(
 localStorage.getItem("base")
 );
 
+const ids=
+Object.values(activos).join(",");
+
+const url=
+`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+
+const datos=
+await fetch(url);
+
+const precios=
+await datos.json();
+
 let ranking=[];
 
-for(let activo of activos){
-
-const r=
-await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
-);
-
-const d=
-await r.json();
+for(const [ticker,id] of Object.entries(activos)){
 
 const actual=
-parseFloat(d.price);
+precios[id].usd;
 
 const valorBase=
-base[activo];
+base[ticker];
 
 const usd=
 actual-valorBase;
@@ -295,74 +350,51 @@ const pct=
 
 let semaforo="⚪";
 
-if(actual>ultimoPrecio[activo]){
+if(actual>ultimoPrecio[ticker]){
 semaforo="🟢";
 }
 
-if(actual<ultimoPrecio[activo]){
+if(actual<ultimoPrecio[ticker]){
 semaforo="🔴";
 }
 
 document.getElementById(
-"sem_"+activo
+"sem_"+ticker
 ).innerHTML=semaforo;
 
 document.getElementById(
-"precio_"+activo
-).innerHTML=formato(actual);
+"actual_"+ticker
+).innerHTML=
+formato(actual);
 
 document.getElementById(
-"usd_"+activo
+"usd_"+ticker
 ).innerHTML=
 (usd>0?"+":"")
 +
 formato(usd);
 
 document.getElementById(
-"pct_"+activo
+"pct_"+ticker
 ).innerHTML=
 pct.toFixed(2)+"%";
 
-let fuerzaTxt="";
-let tendenciaTxt="";
-
-if(pct>=5){
-
-fuerzaTxt="🔥 Muy Fuerte";
-tendenciaTxt="🔥 Explosiva";
-
-}else if(pct>=2){
-
-fuerzaTxt="🟢 Fuerte";
-tendenciaTxt="🟢 Alcista Fuerte";
-
-}else if(pct>=0){
-
-fuerzaTxt="🟡 Neutral";
-tendenciaTxt="🟡 Alcista";
-
-}else if(pct>-3){
-
-fuerzaTxt="🟠 Débil";
-tendenciaTxt="🟠 Bajista";
-
-}else{
-
-fuerzaTxt="🔴 Muy Débil";
-tendenciaTxt="🔴 Bajista Fuerte";
-
-}
+document.getElementById(
+"fuerza_"+ticker
+).innerHTML=
+fuerza(pct);
 
 document.getElementById(
-"fuerza_"+activo
-).innerHTML=fuerzaTxt;
+"tendencia_"+ticker
+).innerHTML=
+tendencia(pct);
 
-ultimoPrecio[activo]=actual;
+ultimoPrecio[ticker]=actual;
 
 ranking.push({
-activo,
+ticker,
 pct,
-fuerza:fuerzaTxt
+fuerza:fuerza(pct)
 });
 
 }
@@ -376,13 +408,15 @@ document.getElementById(
 ).innerHTML=
 
 ranking.map((r,i)=>
+
 `<div>
-${i+1}. ${r.activo.replace("USDT","")}
+${i+1}. ${r.ticker}
 &nbsp;
 ${r.pct.toFixed(2)}%
 &nbsp;
 ${r.fuerza}
 </div>`
+
 ).join("");
 
 }
@@ -394,10 +428,31 @@ localStorage.getItem(
 "baseHora"
 );
 
+if(!baseHora){
+return;
+}
+
 let proxima=
 new Date(
-parseInt(baseHora)+
+parseInt(baseHora)
++
 (4*60*60*1000)
+);
+
+let restante=
+proxima.getTime()
+-
+Date.now();
+
+let horas=
+Math.floor(
+restante/3600000
+);
+
+let minutos=
+Math.floor(
+(restante%3600000)
+/60000
 );
 
 document.getElementById(
@@ -405,21 +460,20 @@ document.getElementById(
 ).innerHTML=
 
 `
-Hora Base:
+🕒 Hora Base:
 ${new Date(
 parseInt(baseHora)
 ).toLocaleTimeString("es-CO")}
 
 <br>
 
-Hora Actual:
-${new Date()
-.toLocaleTimeString("es-CO")}
+⏰ Próxima Base:
+${proxima.toLocaleTimeString("es-CO")}
 
 <br>
 
-Próxima Base:
-${proxima.toLocaleTimeString("es-CO")}
+⌛ Faltan:
+${horas}h ${minutos}m
 `;
 
 }
@@ -450,9 +504,8 @@ actualizarHoras,
 60000
 );
 
-}
-
 </script>
 
 </body>
+
 </html>
