@@ -473,12 +473,16 @@ let html="";
 
 for(const ticker of activos){
     
-    await fetch(
+    const r =
+await fetch(
 `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
 );
 
-const datosActual=
+const datosActual =
 await r.json();
+
+const actual =
+parseFloat(datosActual.price);
 
 const actual=
 parseFloat(datosActual.price);
