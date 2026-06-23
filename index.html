@@ -376,9 +376,13 @@ document.getElementById(
 ).innerHTML=
 
 ranking.map((r,i)=>
-
-${i+1}. ${r.activo.replace("USDT","")} ${r.pct.toFixed(2)}% ${r.fuerza}
-
+`<div>
+${i+1}. ${r.activo.replace("USDT","")}
+&nbsp;
+${r.pct.toFixed(2)}%
+&nbsp;
+${r.fuerza}
+</div>`
 ).join("");
 
 }
