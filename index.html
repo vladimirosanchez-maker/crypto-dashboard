@@ -388,10 +388,7 @@ document.getElementById(
 ${usd>0?'+':''}${formato(usd)}
 </span>`;
 
-document.getElementById(
-"actual_"+ticker
-).innerHTML=
-formato(actual);
+
 
 document.getElementById(
 "pct_"+ticker
@@ -502,11 +499,7 @@ html += `
 <td>
 <b>${ticker.replace("USDT","")}</b>
 </td>
-<td>
-<span style="font-size:9px;color:#ffd700;font-weight:bold;">
-${formato(actual)}
-</span>
-</td>
+
 
 <td>
 <span style="font-size:9px;color:#ffd700;font-weight:bold;">
