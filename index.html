@@ -436,11 +436,11 @@ let html="";
 
 for(const ticker of activos){
 
-const h1 = "...";
-const h4 = "...";
-const d = "...";
-const s = "...";
-const m = "...";
+const h1 = await obtenerMinimo(ticker,"1h",24);
+const h4 = await obtenerMinimo(ticker,"4h",30);
+const d = await obtenerMinimo(ticker,"1d",30);
+const s = await obtenerMinimo(ticker,"1w",52);
+const m = await obtenerMinimo(ticker,"1M",12);
 
 html += `
 <tr>
