@@ -131,7 +131,6 @@ Actualizar Base Ahora
 
 <tr>
 <th>Activo</th>
-<th>🚦</th>
 <th>Actual</th>
 <th>Base</th>
 <th>USD</th>
@@ -353,19 +352,7 @@ const pct=
 const usd=
 actual-valorBase;
 
-let semaforo="⚪";
 
-if(actual>ultimoPrecio[ticker]){
-semaforo="🟢";
-}
-
-if(actual<ultimoPrecio[ticker]){
-semaforo="🔴";
-}
-
-document.getElementById(
-"sem_"+ticker
-).innerHTML=semaforo;
 
 document.getElementById(
 "actual_"+ticker
