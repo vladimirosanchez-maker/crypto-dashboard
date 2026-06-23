@@ -358,12 +358,6 @@ actual-valorBase;
 const pct=
 ((actual-valorBase)/valorBase)*100;
 
-document.getElementById(
-"usd_"+ticker
-).innerHTML=
-`<span style="color:${usd>=0?'#00ff88':'#ff6666'}">
-${usd>0?'+':''}${formato(usd)}
-</span>`;
 
 
 
@@ -372,6 +366,15 @@ document.getElementById(
 "actual_"+ticker
 ).innerHTML=
 formato(actual);
+
+document.getElementById(
+"usd_"+ticker
+).innerHTML=
+`<span style="color:${usd>=0?'#00ff88':'#ff6666'}">
+${usd>0?'+':''}${formato(usd)}
+</span>`;
+
+
 
 
 document.getElementById(
