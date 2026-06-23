@@ -430,6 +430,38 @@ ${r.fuerza}
 ).join("");
 
 }
+
+async function obtenerMinimo(
+ticker,
+intervalo,
+limite
+){
+
+const r=
+await fetch(
+`https://fapi.binance.com/fapi/v1/klines?symbol=${ticker}&interval=${intervalo}&limit=${limite}`
+);
+
+const datos=
+await r.json();
+
+let minimo=
+Number.MAX_VALUE;
+
+for(const vela of datos){
+
+const low=
+parseFloat(vela[3]);
+
+if(low<minimo){
+minimo=low;
+}
+
+}
+
+return formato(minimo);
+
+}
 async function cargarMinimos(){
 
 let html="";
