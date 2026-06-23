@@ -428,7 +428,36 @@ ${r.fuerza}
 ).join("");
 
 }
+async function cargarMinimos(){
 
+let html="";
+
+for(const ticker of activos){
+
+const h1 = "...";
+const h4 = "...";
+const d = "...";
+const s = "...";
+const m = "...";
+
+html += `
+<tr>
+<td>${ticker.replace("USDT","")}</td>
+<td>${h1}</td>
+<td>${h4}</td>
+<td>${d}</td>
+<td>${s}</td>
+<td>${m}</td>
+</tr>
+`;
+
+}
+
+document.getElementById(
+"tablaMinimos"
+).innerHTML=html;
+
+}
 function actualizarHoras(){
 
 let baseHora=
