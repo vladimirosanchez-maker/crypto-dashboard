@@ -140,7 +140,7 @@ function formato(v){
 
 if(v>=1000){
 return Number(v).toLocaleString(
-"es-CO”,
+"es-CO",
 {
 minimumFractionDigits:2,
 maximumFractionDigits:2
@@ -150,7 +150,7 @@ maximumFractionDigits:2
 
 if(v>=1){
 return Number(v).toLocaleString(
-"es-CO”,
+"es-CO",
 {
 minimumFractionDigits:2,
 maximumFractionDigits:4
@@ -159,7 +159,7 @@ maximumFractionDigits:4
 }
 
 return Number(v).toLocaleString(
-"es-CO”,
+"es-CO",
 {
 minimumFractionDigits:6,
 maximumFractionDigits:6
@@ -172,11 +172,11 @@ async function cargar(){
 
 let base=
 JSON.parse(
-localStorage.getItem("base”)
+localStorage.getItem("base")
 );
 
 let baseHora=
-localStorage.getItem("baseHora”);
+localStorage.getItem("baseHora");
 
 if(!base){
 
@@ -198,7 +198,7 @@ parseFloat(d.price);
 }
 
 localStorage.setItem(
-"base”,
+"base",
 JSON.stringify(base)
 );
 
@@ -206,14 +206,14 @@ baseHora=
 Date.now();
 
 localStorage.setItem(
-"baseHora”,
+"baseHora",
 baseHora
 );
 
 }
 
 const tabla=
-document.getElementById("tabla”);
+document.getElementById("tabla");
 
 if(!tablaCreada){
 
@@ -266,7 +266,7 @@ async function actualizarDatos(){
 
 let base=
 JSON.parse(
-localStorage.getItem("base”)
+localStorage.getItem("base")
 );
 
 let ranking=[];
@@ -293,68 +293,68 @@ actual-valorBase;
 const pct=
 (usd/valorBase)*100;
 
-let semaforo="⚪”;
+let semaforo="⚪";
 
 if(actual>ultimoPrecio[activo]){
-semaforo="🟢”;
+semaforo="🟢";
 }
 
 if(actual<ultimoPrecio[activo]){
-semaforo="🔴”;
+semaforo="🔴";
 }
 
 document.getElementById(
-"sem_”+activo
+"sem_"+activo
 ).innerHTML=semaforo;
 
 document.getElementById(
-"precio_”+activo
+"precio_"+activo
 ).innerHTML=formato(actual);
 
 document.getElementById(
-"usd_”+activo
+"usd_"+activo
 ).innerHTML=
-(usd>0?”+”:””)
+(usd>0?"+":"")
 +
 formato(usd);
 
 document.getElementById(
-"pct_”+activo
+"pct_"+activo
 ).innerHTML=
-pct.toFixed(2)+”%”;
+pct.toFixed(2)+"%";
 
-let fuerzaTxt=””;
-let tendenciaTxt=””;
+let fuerzaTxt="";
+let tendenciaTxt="";
 
 if(pct>=5){
 
-fuerzaTxt="🔥 Muy Fuerte”;
-tendenciaTxt="🔥 Explosiva”;
+fuerzaTxt="🔥 Muy Fuerte";
+tendenciaTxt="🔥 Explosiva";
 
 }else if(pct>=2){
 
-fuerzaTxt="🟢 Fuerte”;
-tendenciaTxt="🟢 Alcista Fuerte”;
+fuerzaTxt="🟢 Fuerte";
+tendenciaTxt="🟢 Alcista Fuerte";
 
 }else if(pct>=0){
 
-fuerzaTxt="🟡 Neutral”;
-tendenciaTxt="🟡 Alcista”;
+fuerzaTxt="🟡 Neutral";
+tendenciaTxt="🟡 Alcista";
 
 }else if(pct>-3){
 
-fuerzaTxt="🟠 Débil”;
-tendenciaTxt="🟠 Bajista”;
+fuerzaTxt="🟠 Débil";
+tendenciaTxt="🟠 Bajista";
 
 }else{
 
-fuerzaTxt="🔴 Muy Débil”;
-tendenciaTxt="🔴 Bajista Fuerte”;
+fuerzaTxt="🔴 Muy Débil";
+tendenciaTxt="🔴 Bajista Fuerte";
 
 }
 
 document.getElementById(
-"fuerza_”+activo
+"fuerza_"+activo
 ).innerHTML=fuerzaTxt;
 
 ultimoPrecio[activo]=actual;
@@ -372,14 +372,14 @@ ranking.sort(
 );
 
 document.getElementById(
-"ranking”
+"ranking"
 ).innerHTML=
 
 ranking.map((r,i)=>
 
 ${i+1}. ${r.activo.replace("USDT","")} ${r.pct.toFixed(2)}% ${r.fuerza}
 
-).join(””);
+).join("");
 
 }
 
@@ -387,7 +387,7 @@ function actualizarHoras(){
 
 let baseHora=
 localStorage.getItem(
-"baseHora”
+"baseHora"
 );
 
 let proxima=
@@ -397,25 +397,25 @@ parseInt(baseHora)+
 );
 
 document.getElementById(
-"horas”
+"horas"
 ).innerHTML=
 
 `
 Hora Base:
 ${new Date(
 parseInt(baseHora)
-).toLocaleTimeString("es-CO”)}
+).toLocaleTimeString("es-CO")}
 
 <br>
 
 Hora Actual:
 ${new Date()
-.toLocaleTimeString("es-CO”)}
+.toLocaleTimeString("es-CO")}
 
 <br>
 
 Próxima Base:
-${proxima.toLocaleTimeString("es-CO”)}
+${proxima.toLocaleTimeString("es-CO")}
 `;
 
 }
@@ -423,11 +423,11 @@ ${proxima.toLocaleTimeString("es-CO”)}
 function actualizarBase(){
 
 localStorage.removeItem(
-"base”
+"base"
 );
 
 localStorage.removeItem(
-"baseHora”
+"baseHora"
 );
 
 location.reload();
