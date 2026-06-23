@@ -3,99 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jaime Crypto Dashboard</title>
+
+<title>Crypto Dashboard</title>
+
 <style>
+
 body{
 background:#111;
 color:white;
 font-family:Arial,sans-serif;
+padding:15px;
 margin:0;
-padding:10px;
 }
+
 h1{
 text-align:center;
-font-size:28px;
-margin-bottom:10px;
+font-size:32px;
+margin-bottom:20px;
 }
+
 .info{
-font-size:14px;
+font-size:15px;
 line-height:1.6;
-margin-bottom:15px;
-text-align:center;
+margin-bottom:20px;
 }
+
 button{
 width:100%;
-padding:12px;
-font-size:18px;
+padding:14px;
+font-size:22px;
 font-weight:bold;
 border:none;
 border-radius:10px;
-margin-bottom:15px;
+margin-bottom:20px;
+background:#ddd;
+color:#007aff;
 }
+
 table{
 width:100%;
 border-collapse:collapse;
 font-size:14px;
 }
+
 th{
-padding:8px 3px;
+padding:10px 3px;
 border-bottom:2px solid #333;
 }
+
 td{
-padding:8px 3px;
+padding:10px 3px;
 border-bottom:1px solid #333;
 text-align:center;
 }
+
 .verde{
 color:#00ff88;
 font-weight:bold;
 }
+
 .rojo{
-color:#ff5555;
+color:#ff6666;
 font-weight:bold;
 }
-.blanco{
-color:white;
+
+.ranking{
+margin-top:30px;
 }
+
+.ranking h2{
+font-size:24px;
+}
+
+.ranking div{
+padding:8px 0;
+border-bottom:1px solid #333;
+font-size:16px;
+}
+
 </style>
 </head>
+
 <body>
-<h1>Jaime Crypto Dashboard</h1>
+
+<h1>Crypto Dashboard</h1>
+
 <div id="horas" class="info"></div>
+
 <button onclick="actualizarBase()">
 Actualizar Base Ahora
 </button>
+
 <table>
+
 <thead>
 <tr>
 <th>Activo</th>
+<th>🚦</th>
 <th>Actual</th>
 <th>Base</th>
 <th>USD</th>
 <th>%</th>
+<th>Fuerza</th>
 </tr>
 </thead>
+
 <tbody id="tabla"></tbody>
+
 </table>
+
+<div class="ranking">
+<h2>🏆 Ranking de Fuerza</h2>
+<div id="ranking"></div>
+</div>
+
 <script>
+
 const activos=[
-"BTCUSDT",
-"ETHUSDT",
-"SOLUSDT",
-"XRPUSDT",
 "AAVEUSDT",
-"PENGUUSDT",
-"DOTUSDT",
 "AVAXUSDT",
-"ROSEUSDT",
+"BTCUSDT",
+"CRVUSDT",
+"DOTUSDT",
+"ETHUSDT",
 "LTCUSDT",
+"PENGUUSDT",
+"ROSEUSDT",
+"SOLUSDT",
 "TAOUSDT",
-"CRVUSDT"
+"XRPUSDT"
 ];
-let ultimoPrecio={};
-function formato(valor){
-if(valor>=1000){
-return Number(valor).toLocaleString(
+
+function formato(v){
+
+if(v>=1000){
+return Number(v).toLocaleString(
 "es-CO",
 {
 minimumFractionDigits:2,
@@ -103,8 +145,9 @@ maximumFractionDigits:2
 }
 );
 }
-if(valor>=1){
-return Number(valor).toLocaleString(
+
+if(v>=1){
+return Number(v).toLocaleString(
 "es-CO",
 {
 minimumFractionDigits:2,
@@ -112,188 +155,231 @@ maximumFractionDigits:4
 }
 );
 }
-return Number(valor).toLocaleString(
+
+return Number(v).toLocaleString(
 "es-CO",
 {
 minimumFractionDigits:6,
 maximumFractionDigits:6
 }
 );
+
 }
-async function crearTabla(){
+
+function fuerza(p){
+
+if(p>=5) return "🔥 Muy Fuerte";
+if(p>=2) return "🟢 Fuerte";
+if(p>-2) return "⚪ Neutral";
+if(p>-5) return "🟠 Débil";
+
+return "🔴 Muy Débil";
+
+}
+
+async function cargar(){
+
 let base=
-JSON.parse(localStorage.getItem("base"));
+JSON.parse(
+localStorage.getItem("base")
+);
+
 let baseHora=
 localStorage.getItem("baseHora");
+
 if(!base){
+
 base={};
+
 for(let activo of activos){
-const r=await fetch(
+
+const r=
+await fetch(
 `https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
 );
-const d=await r.json();
-base[activo]=parseFloat(d.price);
+
+const d=
+await r.json();
+
+base[activo]=
+parseFloat(d.price);
+
 }
+
 localStorage.setItem(
 "base",
 JSON.stringify(base)
 );
-baseHora=Date.now();
+
+baseHora=
+Date.now();
+
 localStorage.setItem(
 "baseHora",
 baseHora
 );
+
 }
+
 const tabla=
 document.getElementById("tabla");
+
 tabla.innerHTML="";
+
+let ranking=[];
+
 for(let activo of activos){
-ultimoPrecio[activo]=
+
+const r=
+await fetch(
+`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
+);
+
+const d=
+await r.json();
+
+const actual=
+parseFloat(d.price);
+
+const valorBase=
 base[activo];
-const fila=`
+
+const usd=
+actual-valorBase;
+
+const pct=
+(usd/valorBase)*100;
+
+ranking.push({
+activo,
+pct
+});
+
+let color=
+usd>=0?"verde":"rojo";
+
+let semaforo=
+usd>=0?"🟢":"🔴";
+
+tabla.innerHTML+=`
+
 <tr>
-<td>${activo.replace("USDT","")}</td>
-<td
-id="precio_${activo}"
-class="blanco"
->
-${formato(base[activo])}
-</td>
+
 <td>
-${formato(base[activo])}
+${activo.replace("USDT","")}
 </td>
-<td
-id="usd_${activo}"
->
-0
+
+<td>
+${semaforo}
 </td>
-<td
-id="pct_${activo}"
->
-0%
+
+<td class="${color}">
+${formato(actual)}
 </td>
+
+<td>
+${formato(valorBase)}
+</td>
+
+<td class="${color}">
+${usd>0?"+":""}
+${formato(usd)}
+</td>
+
+<td class="${color}">
+${pct.toFixed(2)}%
+</td>
+
+<td>
+${fuerza(pct)}
+</td>
+
 </tr>
+
 `;
-tabla.innerHTML+=fila;
+
 }
-actualizarHoras();
-}
-function actualizarHoras(){
-const baseHora=
-parseInt(
-localStorage.getItem("baseHora")
+
+ranking.sort(
+(a,b)=>b.pct-a.pct
 );
-const vencimiento=
-baseHora+
-(4*60*60*1000);
-const restante=
-Math.max(
-0,
-vencimiento-Date.now()
+
+let htmlRanking="";
+
+ranking.forEach((c,i)=>{
+
+htmlRanking+=`
+
+<div>
+
+${i+1}. 
+${c.activo.replace("USDT","")}
+&nbsp;&nbsp;
+${c.pct.toFixed(2)}%
+
+</div>
+
+`;
+
+});
+
+document.getElementById(
+"ranking"
+).innerHTML=
+htmlRanking;
+
+let proxima=
+new Date(
+parseInt(baseHora)+
+(4*60*60*1000)
 );
-const horas=
-Math.floor(
-restante/3600000
-);
-const minutos=
-Math.floor(
-(restante%3600000)/60000
-);
+
 document.getElementById(
 "horas"
 ).innerHTML=
+
 `
-🕒 Base:
-${new Date(baseHora)
-.toLocaleTimeString('es-CO')}
+<b>Hora Base:</b>
+${new Date(
+parseInt(baseHora)
+).toLocaleTimeString("es-CO")}
+
 <br>
-⏰ Vence:
-${new Date(vencimiento)
-.toLocaleTimeString('es-CO')}
+
+<b>Hora Actual:</b>
+${new Date()
+.toLocaleTimeString("es-CO")}
+
 <br>
-⌛ Faltan:
-${horas}h ${minutos}m
+
+<b>Próxima Base:</b>
+${proxima.toLocaleTimeString("es-CO")}
 `;
+
 }
-async function actualizarPrecios(){
-const base=
-JSON.parse(
-localStorage.getItem("base")
-);
-for(let activo of activos){
-try{
-const r=await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${activo}`
-);
-const d=await r.json();
-const actual=
-parseFloat(d.price);
-const baseValor=
-base[activo];
-const usd=
-actual-baseValor;
-const pct=
-((actual/baseValor)-1)*100;
-const precioCelda=
-document.getElementById(
-"precio_"+activo
-);
-if(
-actual>
-ultimoPrecio[activo]
-){
-precioCelda.className=
-"verde";
-}
-else if(
-actual<
-ultimoPrecio[activo]
-){
-precioCelda.className=
-"rojo";
-}
-precioCelda.innerHTML=
-formato(actual);
-document.getElementById(
-"usd_"+activo
-).innerHTML=
-(usd>0?"+":"")
-+
-formato(usd);
-document.getElementById(
-"pct_"+activo
-).innerHTML=
-( pct>0?"+":"")
-+
-pct.toFixed(2)
-+
-"%";
-ultimoPrecio[activo]=
-actual;
-}catch(e){
-console.log(e);
-}
-}
-actualizarHoras();
-}
+
 function actualizarBase(){
+
 localStorage.removeItem(
 "base"
 );
+
 localStorage.removeItem(
 "baseHora"
 );
-location.reload();
+
+cargar();
+
 }
-crearTabla();
+
+cargar();
+
 setInterval(
-actualizarPrecios,
+cargar,
 5000
 );
-setInterval(
-actualizarHoras,
-60000
-);
+
 </script>
+
 </body>
 </html>
