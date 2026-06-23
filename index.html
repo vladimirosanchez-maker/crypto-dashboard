@@ -454,7 +454,13 @@ const low=
 parseFloat(vela[3]);
 
 if(low<minimo){
+
 minimo=low;
+
+fechaMinimo=
+new Date(vela[0])
+.toLocaleString("es-CO");
+
 }
 
 }
