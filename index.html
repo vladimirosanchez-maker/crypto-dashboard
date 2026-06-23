@@ -474,8 +474,7 @@ let html="";
 
 for(const ticker of activos){
     
-    const r=
-await fetch(
+    await fetch(
 `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
 );
 
