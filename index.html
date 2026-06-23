@@ -341,23 +341,13 @@ const actual=
 parseFloat(d.price);
 
 const valorBase=
-base[ticker];
+base[ticker] || actual;
 
 const usd=
 actual-valorBase;
 
 const pct=
 ((actual-valorBase)/valorBase)*100;
-
-const valorBase=
-base[ticker];
-
-const usd=
-actual-valorBase;
-
-const pct=
-((actual-valorBase)/valorBase)*100;
-
 
 document.getElementById(
 "usd_"+ticker
@@ -366,22 +356,15 @@ document.getElementById(
 ${usd>0?'+':''}${formato(usd)}
 </span>`;
 
-
 document.getElementById(
 "actual_"+ticker
 ).innerHTML=
 formato(actual);
 
-
-
-
-
-
 document.getElementById(
 "pct_"+ticker
 ).innerHTML=
 pct.toFixed(2)+"%";
-
 
 document.getElementById(
 "tendencia_"+ticker
