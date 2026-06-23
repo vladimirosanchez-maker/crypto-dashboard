@@ -370,10 +370,12 @@ await r.json();
 
 const actual=
 parseFloat(d.price);
+
 document.getElementById(
 "actual_"+ticker
 ).innerHTML=
 formato(actual);
+
 const valorBase=
 base[ticker] || actual;
 
