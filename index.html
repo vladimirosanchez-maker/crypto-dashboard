@@ -135,7 +135,6 @@ Actualizar Base Ahora
 <th>Base</th>
 <th>USD</th>
 <th>%</th>
-<th>Fuerza</th>
 <th>Tendencia</th>
 </tr>
 
@@ -305,9 +304,7 @@ ${formato(base[ticker])}
 0%
 </td>
 
-<td id="fuerza_${ticker}">
-🟡 Neutral
-</td>
+
 
 <td id="tendencia_${ticker}">
 🟢 Alcista
@@ -394,10 +391,6 @@ document.getElementById(
 ).innerHTML=
 pct.toFixed(2)+"%";
 
-document.getElementById(
-"fuerza_"+ticker
-).innerHTML=
-fuerza(pct);
 
 document.getElementById(
 "tendencia_"+ticker
