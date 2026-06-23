@@ -481,16 +481,7 @@ let html="";
 
 for(const ticker of activos){
     
-    const r =
-await fetch(
-`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
-);
-
-const datosActual =
-await r.json();
-
-const actual =
-parseFloat(datosActual.price);
+ 
 
 
     
@@ -502,14 +493,7 @@ const d = await obtenerMinimo(ticker,"1d",30);
 const s = await obtenerMinimo(ticker,"1w",52);
 const m = await obtenerMinimo(ticker,"1M",12);
 
-const soporte=
-Math.min(
-h1.precio,
-h4.precio,
-d.precio,
-s.precio,
-m.precio
-);
+
 
 html += `
 <tr>
@@ -564,11 +548,6 @@ ${formato(m.precio)}
 </span>
 <br>
 <small>${m.fecha}</small>
-</td>
-<td>
-<span style="font-size:9px;color:#ffd700;font-weight:bold;">
-${soporte?.precio || "SIN DATO"}
-</span>
 </td>
 </tr>
 `;
