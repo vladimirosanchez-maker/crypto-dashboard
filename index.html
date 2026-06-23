@@ -239,7 +239,7 @@ for(let ticker of activos){
 
 const r=
 await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${ticker}`
+`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
 );
 
 const d=
@@ -335,7 +335,7 @@ for(let ticker of activos){
 
 const r=
 await fetch(
-`https://api.binance.com/api/v3/ticker/price?symbol=${ticker}`
+`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
 );
 
 const d=
