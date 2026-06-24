@@ -855,7 +855,28 @@ dOI[0].sumOpenInterestValue
 }
 
 }catch(e){}
+document.getElementById(
+"datosFutures"
+).innerHTML=
 
+`
+📊 Datos Futures
+
+<br>
+
+Precio:
+<b>${formato(actual)}</b>
+
+<br>
+
+Open Interest:
+<b>${oi}</b>
+
+<br>
+
+Volumen 24h:
+<b>${volumen}</b>
+`;
 let html=`
 
 <table style="
