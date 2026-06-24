@@ -422,7 +422,49 @@ oninput="calcularSimulador()">
 </div>
 
 </div>
+<h2>🚨 Alertas BTC / ETH</h2>
 
+<div id="alertasContainer">
+
+<button onclick="mostrarFormularioAlerta()">
+➕ Nueva Alerta
+</button>
+
+<div id="formularioAlerta"
+style="display:none;margin-top:10px;">
+
+<select id="alertaActivo">
+<option value="BTCUSDT">BTC</option>
+<option value="ETHUSDT">ETH</option>
+</select>
+
+<select id="alertaCondicion">
+<option value="mayor">≥ Mayor o Igual</option>
+<option value="menor">≤ Menor o Igual</option>
+</select>
+
+<input
+type="number"
+id="alertaPrecio"
+placeholder="Precio objetivo"
+style="width:100%;padding:8px;margin-top:10px;"
+>
+
+<button
+onclick="crearAlerta()"
+style="margin-top:10px;">
+Guardar Alerta
+</button>
+
+</div>
+
+<div id="listaAlertas"></div>
+
+<h3>📜 Historial</h3>
+
+<div id="historialAlertas"></div>
+
+</div>
 </div>
 <script>
 
