@@ -1546,7 +1546,57 @@ document.getElementById(
 ).innerHTML += html;
 
 }
+function verificarAlertas(){
 
+for(const alerta of alertas){
+
+if(alerta.ejecutada){
+continue;
+}
+
+const actual=
+preciosActuales[alerta.activo];
+
+if(!actual){
+continue;
+}
+
+let activar=false;
+
+if(
+alerta.condicion==="mayor"
+&&
+actual>=alerta.precio
+){
+activar=true;
+}
+
+if(
+alerta.condicion==="menor"
+&&
+actual<=alerta.precio
+){
+activar=true;
+}
+
+if(activar){
+
+alerta.ejecutada=true;
+
+alert(
+`🚨 ALERTA ACTIVADA
+
+${alerta.activo.replace("USDT","")}
+
+Precio actual:
+${formato(actual)}`
+);
+
+}
+
+}
+
+}
 </script>
 
 
