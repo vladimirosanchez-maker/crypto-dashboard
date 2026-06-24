@@ -1677,10 +1677,11 @@ if(activar){
 
 alerta.ejecutada=true;
 
-alert(
-`🚨 ALERTA ACTIVADA
-
-${alerta.activo.replace("USDT","")}
+mostrarPopupAlerta(
+alerta.activo,
+`${alerta.condicion=="mayor"?"≥":"≤"} ${alerta.precio}`,
+actual
+);
 
 Precio actual:
 ${formato(actual)}`
