@@ -829,6 +829,32 @@ const actual=
 parseFloat(datos.price);
 let oi="N/D";
 let volumen="N/D";
+try{
+
+const rOI=
+await fetch(
+`https://fapi.binance.com/futures/data/openInterestHist?symbol=${ticker}&period=5m&limit=1`
+);
+
+const dOI=
+await rOI.json();
+
+if(
+Array.isArray(dOI)
+&&
+dOI.length>0
+){
+
+oi=
+(
+parseFloat(
+dOI[0].sumOpenInterestValue
+)/1000000000
+).toFixed(2)+"B";
+
+}
+
+}catch(e){}
 
 let html=`
 
