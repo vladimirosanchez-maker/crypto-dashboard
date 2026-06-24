@@ -546,6 +546,7 @@ const activos=[
 let ultimoPrecio={};
 let tablaCreada=false;
 let preciosActuales={};
+
 let alertas=[];
 
 let historialAlertas=[];
@@ -1482,6 +1483,15 @@ const precio=
 document.getElementById(
 "alertaPrecio"
 ).value;
+
+alertas.push({
+
+activo,
+condicion,
+precio:parseFloat(precio),
+ejecutada:false
+
+});
 
 if(!precio){
 
