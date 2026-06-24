@@ -1461,6 +1461,61 @@ f.style.display="none";
 }
 
 }
+function crearAlerta(){
+
+const activo=
+document.getElementById(
+"alertaActivo"
+).value;
+
+const condicion=
+document.getElementById(
+"alertaCondicion"
+).value;
+
+const precio=
+document.getElementById(
+"alertaPrecio"
+).value;
+
+if(!precio){
+
+alert(
+"Debes ingresar un precio"
+);
+
+return;
+
+}
+
+const html=
+
+`
+<div class="alerta-card alerta-activa">
+
+<b>
+${activo.replace("USDT","")}
+</b>
+
+<br>
+
+${condicion==="mayor" ? "≥" : "≤"}
+
+${precio}
+
+<br>
+
+Estado: 🔔 Activa
+
+</div>
+`;
+
+document.getElementById(
+"listaAlertas"
+).innerHTML += html;
+
+}
+
 </script>
 
 
