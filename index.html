@@ -797,7 +797,21 @@ location.reload();
 }
 
 cargar();
+const select =
+document.getElementById("criptoSelect");
 
+if(select){
+
+for(const ticker of activos){
+
+select.innerHTML +=
+`<option value="${ticker}">
+${ticker.replace("USDT","")}
+</option>`;
+
+}
+
+}
 setInterval(
 actualizarDatos,
 3000
