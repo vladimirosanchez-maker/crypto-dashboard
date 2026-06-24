@@ -1439,8 +1439,31 @@ setInterval(
 cargarMinimos,
 3600000
 );
+function mostrarFormularioAlerta(){
 
+const f=
+document.getElementById(
+"formularioAlerta"
+);
+
+if(
+f.style.display==="none"
+||
+f.style.display===""
+){
+
+f.style.display="block";
+
+}else{
+
+f.style.display="none";
+
+}
+
+}
 </script>
+
+
 
 </body>
 
