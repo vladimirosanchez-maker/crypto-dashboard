@@ -789,6 +789,71 @@ document.getElementById("liqShort")
 .innerHTML=formato(liqShort);
 
 }
+function calcularSimulador(){
+
+const ticker=
+document.getElementById("criptoSelect").value;
+
+const base=
+JSON.parse(localStorage.getItem("base"));
+
+if(!base || !ticker){
+return;
+}
+
+const valorBase=
+base[ticker];
+
+const actual=
+preciosActuales[ticker] || valorBase;
+
+const entrada=
+parseFloat(
+document.getElementById("entradaUSDT").value
+) || 0;
+
+const x=
+parseFloat(
+document.getElementById("apalancamiento").value
+);
+
+const variacion=
+(actual-valorBase)/valorBase;
+
+const resultadoLong=
+entrada*x*variacion;
+
+const resultadoShort=
+resultadoLong*(-1);
+
+const liqLong=
+valorBase*(1-(1/x));
+
+const liqShort=
+valorBase*(1+(1/x));
+
+document.getElementById("valorBase")
+.innerHTML=formato(valorBase);
+
+document.getElementById("precioActual")
+.innerHTML=formato(actual);
+
+document.getElementById("resultadoLong")
+.innerHTML=
+resultadoLong.toFixed(2)+" USDT";
+
+document.getElementById("resultadoShort")
+.innerHTML=
+resultadoShort.toFixed(2)+" USDT";
+
+document.getElementById("liqLong")
+.innerHTML=formato(liqLong);
+
+document.getElementById("liqShort")
+.innerHTML=formato(liqShort);
+
+}
+
 
 function actualizarHoras(){
 
