@@ -176,43 +176,24 @@ Actualizar Base Ahora
 
 <h2>📊 Simulador Futures Binance</h2>
 
-<div id="simulador">
+<div id="simulador" class="sim-card">
 
-<p>
-<b>Modo:</b> AISLADO
-</p>
+<div class="modo-box">
+Modo: <span>AISLADO</span>
+</div>
 
-<p>
-Cripto
-</p>
+<div class="fila2">
 
-<select
-id="criptoSelect"
+<div class="card">
+<label>Cripto</label>
+<select id="criptoSelect"
 onchange="calcularSimulador()">
 </select>
+</div>
 
-<br><br>
-
-<p>
-Valor Entrada USDT
-</p>
-
-<input
-type="number"
-id="entradaUSDT"
-value="100"
-oninput="calcularSimulador()"
-style="width:120px;padding:8px;text-align:center;"
->
-
-<br><br>
-
-<p>
-Apalancamiento
-</p>
-
-<select
-id="apalancamiento"
+<div class="card">
+<label>Apalancamiento</label>
+<select id="apalancamiento"
 onchange="calcularSimulador()">
 
 <option value="1">1X</option>
@@ -222,38 +203,63 @@ onchange="calcularSimulador()">
 <option value="5">5X</option>
 
 </select>
+</div>
 
-<hr>
+</div>
 
-<p>
-<b>Valor Base:</b>
-<span id="valorBase">0</span>
-</p>
+<div class="entrada-box">
 
-<p>
-<b>Precio Actual:</b>
-<span id="precioActual">0</span>
-</p>
+<label>Valor Entrada USDT</label>
 
-<p>
-<b>Resultado Long:</b>
-<span id="resultadoLong">0</span>
-</p>
+<input
+type="number"
+id="entradaUSDT"
+value="100"
+oninput="calcularSimulador()">
 
-<p>
-<b>Resultado Short:</b>
-<span id="resultadoShort">0</span>
-</p>
+</div>
 
-<p>
-<b>Liquidación Long:</b>
-<span id="liqLong">0</span>
-</p>
+<div class="fila2">
 
-<p>
-<b>Liquidación Short:</b>
-<span id="liqShort">0</span>
-</p>
+<div class="resultado amarillo">
+<div class="titulo">Valor Base</div>
+<div class="valor" id="valorBase">0</div>
+</div>
+
+<div class="resultado verde">
+<div class="titulo">Precio Actual</div>
+<div class="valor" id="precioActual">0</div>
+</div>
+
+</div>
+
+<div class="fila2">
+
+<div class="resultado verde">
+<div class="titulo">Resultado Long</div>
+<div class="valor" id="resultadoLong">0</div>
+</div>
+
+<div class="resultado rojo">
+<div class="titulo">Resultado Short</div>
+<div class="valor" id="resultadoShort">0</div>
+</div>
+
+</div>
+
+<div class="fila2">
+
+<div class="resultado naranja">
+<div class="titulo">Liquidación Long</div>
+<div class="valor" id="liqLong">0</div>
+</div>
+
+<div class="resultado naranja">
+<div class="titulo">Liquidación Short</div>
+<div class="valor" id="liqShort">0</div>
+</div>
+
+</div>
 
 </div>
 <script>
