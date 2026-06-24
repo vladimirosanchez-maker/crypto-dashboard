@@ -274,7 +274,54 @@ Actualizar Base Ahora
 <tbody id="tablaMinimos"></tbody>
 
 </table>
+<details id="heatMapPanel">
 
+<summary style="
+font-size:18px;
+font-weight:bold;
+padding:12px;
+cursor:pointer;
+background:#222;
+border-radius:10px;
+margin-top:20px;
+">
+🔥 Heat Map BTC / ETH
+</summary>
+
+<div style="
+padding:10px;
+background:#181818;
+border-radius:10px;
+margin-top:10px;
+">
+
+<select
+id="heatMapActivo"
+style="
+width:100%;
+padding:10px;
+margin-bottom:15px;
+"
+onchange="generarHeatMap()"
+>
+
+<option value="BTCUSDT">
+BTC
+</option>
+
+<option value="ETHUSDT">
+ETH
+</option>
+
+</select>
+
+<div id="heatMapContenido">
+Cargando Heat Map...
+</div>
+
+</div>
+
+</details>
 <h2>📊 Simulador Futures Binance</h2>
 
 <div id="simulador" class="sim-card">
