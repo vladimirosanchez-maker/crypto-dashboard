@@ -1729,6 +1729,31 @@ Aceptar
 </div>
 
 </div>
+
+function mostrarPopupAlerta(activo,condicion,precio){
+
+document.getElementById("popupActivo").innerHTML=
+activo.replace("USDT","");
+
+document.getElementById("popupCondicion").innerHTML=
+condicion;
+
+document.getElementById("popupPrecio").innerHTML=
+formato(precio);
+
+document.getElementById("popupHora").innerHTML=
+new Date().toLocaleTimeString("es-CO");
+
+document.getElementById("popupAlerta").style.display="flex";
+
+}
+
+function cerrarPopup(){
+
+document.getElementById("popupAlerta").style.display="none";
+
+}
+
 </script>
 
 
