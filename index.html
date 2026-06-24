@@ -796,7 +796,170 @@ document.getElementById(
 ).innerHTML=html;
 
 }
+async function generarHeatMap(){
 
+const ticker=
+document.getElementById(
+"heatMapActivo"
+).value;
+
+const r=
+await fetch(
+`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${ticker}`
+);
+
+const datos=
+await r.json();
+
+const actual=
+parseFloat(datos.price);
+
+let html=`
+
+<table style="
+width:100%;
+font-size:12px;
+">
+
+<tr>
+
+<th>Precio</th>
+<th>Intensidad</th>
+<th>Capital</th>
+
+</tr>
+
+`;
+
+for(let i=10;i>=1;i--){
+
+const precio=
+actual*(1+(i/100));
+
+const capital=
+Math.round(
+200+(i*90)
+);
+
+const ancho=
+10+(i*9);
+
+html+=`
+
+<tr>
+
+<td>
+${formato(precio)}
+</td>
+
+<td>
+
+<div style="
+width:${ancho}%;
+height:12px;
+background:
+linear-gradient(
+90deg,
+yellow,
+orange,
+red
+);
+border-radius:4px;
+">
+</div>
+
+</td>
+
+<td>
+${capital}M
+</td>
+
+</tr>
+
+`;
+
+}
+
+html+=`
+
+<tr>
+
+<td colspan="3"
+style="
+text-align:center;
+color:#00aaff;
+font-weight:bold;
+padding:12px;
+">
+
+← PRECIO ACTUAL →
+
+<br>
+
+${formato(actual)}
+
+</td>
+
+</tr>
+
+`;
+
+for(let i=1;i<=10;i++){
+
+const precio=
+actual*(1-(i/100));
+
+const capital=
+Math.round(
+200+(i*90)
+);
+
+const ancho=
+10+(i*9);
+
+html+=`
+
+<tr>
+
+<td>
+${formato(precio)}
+</td>
+
+<td>
+
+<div style="
+width:${ancho}%;
+height:12px;
+background:
+linear-gradient(
+90deg,
+#00ff88,
+yellow,
+orange
+);
+border-radius:4px;
+">
+</div>
+
+</td>
+
+<td>
+${capital}M
+</td>
+
+</tr>
+
+`;
+
+}
+
+html+=`</table>`;
+
+document.getElementById(
+"heatMapContenido"
+).innerHTML=html;
+
+}
 function calcularSimulador(){
 
 const ticker=
